@@ -1,0 +1,55 @@
+import tkinter
+import math
+
+'''
+# test to see tkinter is imported properly
+tkinter._test()
+'''
+from tkinter import Tk
+from tkinter import ttk
+from tkinter import *
+# function definition
+def action(self,argi):
+    """pressed button's value is inserted into the end of the text area"""
+    self.e.insert(END,argi)
+
+
+root=Tk()
+root.title("Calculator GUI")
+root.geometry("250x250")# default size of the window
+root.resizable(0,0)# window CANNOT be resized
+exp=Entry(root)
+exp.grid(row=0, columnspan=10)
+numPad=[['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['-', '0', '.']]
+r=1
+c=0
+for row in numPad:
+    for elm in row:
+        if(c == 2):
+            Button(root, text=elm,command=lambda:self.action(elm)).grid(row=r, column=c, padx=(0,5))
+        else:
+            Button(root, text=elm).grid(row=r, column=c)
+        c+=1
+    r+=1
+    c=0
+operations=[['+', '-'], ['*', '/'], '=']
+i=1;
+j=5;
+for row in operations:
+    for elm in row:
+        Button(root, text=elm).grid(row=i, column=j)
+        j+=1
+    i+=1
+    j=5
+trigOp=[['sin', 'asin'], ['cos', 'acos'], ['tan','atan']]
+a=1
+b=7
+for row in trigOp:
+    for elm in row:
+        Button(root, text=elm).grid(row=a, column=b)
+        b+=1
+    a+=1
+    b=7
+
+
+root.mainloop() # keep window open until user closes it
