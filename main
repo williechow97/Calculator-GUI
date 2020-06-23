@@ -8,48 +8,111 @@ tkinter._test()
 from tkinter import Tk
 from tkinter import ttk
 from tkinter import *
-# function definition
-def action(self,argi):
-    """pressed button's value is inserted into the end of the text area"""
-    self.e.insert(END,argi)
 
+# expression to access among all the functions
+expression = ""
+# functions
+def input_number(number, equation):
+   # accessing the global expression variable
+   global expression
+   if(number != 'clr'):
+       # concatenation of string
+       expression = expression + number
+       equation.set(expression)
+   else:
+       expression = ""
+       # setting empty string in the input field
+       equation.set("Enter an expression")
+def input_operation(op,equation):
+    global expression
+    if(op != '='):
+        if(op == 'sq'):
+            expression = square(equation)
+            equation.set(expression)
+        else:
+            expression = expression + op
+            equation.set(expression)
+    else:
+        # trying to evaluate the expression
+        try:
+            print("try blk")
+            result = str(eval(expression))
+        # showing the result in the input field
+            equation.set(result)
+        # setting expression to empty string
+            expression = ""
+        except:
+        # some error occured
+            equation.set("Enter a valid expression")
+            expression = ""
+def square(equation):
+    return str(int(equation.get())*int(equation.get()))
+def input_trig(trig,equation):
+    global expression
+    # trying to evaluate the expression
+    try:
+        if(trig == 'sin'):
+            result = str(math.sin(float(equation.get())))
+        elif(trig == 'asin'):
+            result = str(math.asin(float(equation.get())))
+        elif(trig == 'cos'):
+            result = str(math.cos(float(equation.get())))
+        elif(trig == 'acos'):
+            result = str(math.acos(float(equation.get())))
+        elif(trig == 'tan'):
+            result = str(math.tan(float(equation.get())))
+        elif(trig == 'atan'):
+            result = str(math.atan(float(equation.get())))
+        else:
+            result="Error"
+    # showing the result in the input field
+        equation.set(result + " radians")
+    # setting expression to empty string
+        expression = ""
+    except:
+    # some error occured
+        equation.set("Enter a valid expression")
+        expression = ""
 
+# Creating GUI
 root=Tk()
 root.title("Calculator GUI")
-root.geometry("250x250")# default size of the window
+root.geometry("325x225")# default size of the window
 root.resizable(0,0)# window CANNOT be resized
-exp=Entry(root)
+equation=StringVar()
+exp=Entry(root,textvariable=equation)
+equation.set("Enter an expression")
 exp.grid(row=0, columnspan=10)
-numPad=[['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['-', '0', '.']]
-r=1
+numPad=[['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['clr', '0', '.']]
+r=0
 c=0
 for row in numPad:
     for elm in row:
         if(c == 2):
-            Button(root, text=elm,command=lambda:self.action(elm)).grid(row=r, column=c, padx=(0,5))
+            # lambda r=r --> saves the current value when lambda is called
+            Button(root, text=elm,command=lambda r=r, c=c:input_number(numPad[r][c],equation)).grid(row=r+1, column=c, padx=(0,5))
         else:
-            Button(root, text=elm).grid(row=r, column=c)
+            Button(root, text=elm,command=lambda r=r, c=c:input_number(numPad[r][c],equation)).grid(row=r+1, column=c)
         c+=1
     r+=1
     c=0
-operations=[['+', '-'], ['*', '/'], '=']
-i=1;
+operations=[['+', '-'], ['*', '/'], ['=','sq']]
+i=0;
 j=5;
 for row in operations:
     for elm in row:
-        Button(root, text=elm).grid(row=i, column=j)
+        Button(root, text=elm,command=lambda i=i, j=j:input_operation(operations[i][j-5],equation)).grid(row=i+1, column=j)
         j+=1
     i+=1
     j=5
 trigOp=[['sin', 'asin'], ['cos', 'acos'], ['tan','atan']]
-a=1
+a=0
 b=7
 for row in trigOp:
     for elm in row:
-        Button(root, text=elm).grid(row=a, column=b)
+        Button(root, text=elm,command=lambda a=a, b=b:input_trig(trigOp[a][b-7],equation)).grid(row=a+1, column=b)
         b+=1
     a+=1
     b=7
-
 
 root.mainloop() # keep window open until user closes it
