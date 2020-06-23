@@ -15,17 +15,27 @@ expression = ""
 def input_number(number, equation):
    # accessing the global expression variable
    global expression
-   # concatenation of string
-   expression = expression + number
-   equation.set(expression)
+   if(number != 'clr'):
+       # concatenation of string
+       expression = expression + number
+       equation.set(expression)
+   else:
+       expression = ""
+       # setting empty string in the input field
+       equation.set("Enter an expression")
 def input_operation(op,equation):
     global expression
     if(op != '='):
-        expression = expression + op
-        equation.set(expression)
+        if(op == 'sq'):
+            expression = square(equation)
+            equation.set(expression)
+        else:
+            expression = expression + op
+            equation.set(expression)
     else:
         # trying to evaluate the expression
         try:
+            print("try blk")
             result = str(eval(expression))
         # showing the result in the input field
             equation.set(result)
@@ -35,13 +45,28 @@ def input_operation(op,equation):
         # some error occured
             equation.set("Enter a valid expression")
             expression = ""
+def square(equation):
+    return str(int(equation.get())*int(equation.get()))
 def input_trig(trig,equation):
     global expression
     # trying to evaluate the expression
     try:
-        result = str(eval(expression))
+        if(trig == 'sin'):
+            result = str(math.sin(float(equation.get())))
+        elif(trig == 'asin'):
+            result = str(math.asin(float(equation.get())))
+        elif(trig == 'cos'):
+            result = str(math.cos(float(equation.get())))
+        elif(trig == 'acos'):
+            result = str(math.acos(float(equation.get())))
+        elif(trig == 'tan'):
+            result = str(math.tan(float(equation.get())))
+        elif(trig == 'atan'):
+            result = str(math.atan(float(equation.get())))
+        else:
+            result="Error"
     # showing the result in the input field
-        equation.set(result)
+        equation.set(result + " radians")
     # setting expression to empty string
         expression = ""
     except:
@@ -49,14 +74,10 @@ def input_trig(trig,equation):
         equation.set("Enter a valid expression")
         expression = ""
 
-def action(self,argi):
-    """pressed button's value is inserted into the end of the text area"""
-    self.e.insert(END,argi)
-
 # Creating GUI
 root=Tk()
 root.title("Calculator GUI")
-root.geometry("250x250")# default size of the window
+root.geometry("325x225")# default size of the window
 root.resizable(0,0)# window CANNOT be resized
 equation=StringVar()
 exp=Entry(root,textvariable=equation)
@@ -68,16 +89,14 @@ c=0
 for row in numPad:
     for elm in row:
         if(c == 2):
-            #print(getValue(numPad,r,c))
             # lambda r=r --> saves the current value when lambda is called
             Button(root, text=elm,command=lambda r=r, c=c:input_number(numPad[r][c],equation)).grid(row=r+1, column=c, padx=(0,5))
         else:
-            #print(numPad[r][c], end="  ")
             Button(root, text=elm,command=lambda r=r, c=c:input_number(numPad[r][c],equation)).grid(row=r+1, column=c)
         c+=1
     r+=1
     c=0
-operations=[['+', '-'], ['*', '/'], ['=','^']]
+operations=[['+', '-'], ['*', '/'], ['=','sq']]
 i=0;
 j=5;
 for row in operations:
@@ -91,10 +110,9 @@ a=0
 b=7
 for row in trigOp:
     for elm in row:
-        Button(root, text=elm,command=lambda a=a, b=b:input_trig(trigOp[a][b],equation)).grid(row=a+1, column=b)
+        Button(root, text=elm,command=lambda a=a, b=b:input_trig(trigOp[a][b-7],equation)).grid(row=a+1, column=b)
         b+=1
     a+=1
     b=7
-
 
 root.mainloop() # keep window open until user closes it
