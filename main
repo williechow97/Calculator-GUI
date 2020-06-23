@@ -16,60 +16,82 @@ def input_number(number, equation):
    # accessing the global expression variable
    global expression
    # concatenation of string
-   expression = expression + str(number)
+   expression = expression + number
    equation.set(expression)
+def input_operation(op,equation):
+    global expression
+    if(op != '='):
+        expression = expression + op
+        equation.set(expression)
+    else:
+        # trying to evaluate the expression
+        try:
+            result = str(eval(expression))
+        # showing the result in the input field
+            equation.set(result)
+        # setting expression to empty string
+            expression = ""
+        except:
+        # some error occured
+            equation.set("Enter a valid expression")
+            expression = ""
+def input_trig(trig,equation):
+    global expression
+    # trying to evaluate the expression
+    try:
+        result = str(eval(expression))
+    # showing the result in the input field
+        equation.set(result)
+    # setting expression to empty string
+        expression = ""
+    except:
+    # some error occured
+        equation.set("Enter a valid expression")
+        expression = ""
+
 def action(self,argi):
     """pressed button's value is inserted into the end of the text area"""
     self.e.insert(END,argi)
-
-
-# trying to evaluate the expression
-try:
-    result = str(eval(expression))
-# showing the result in the input field
-    equation.set(result)
-# setting expression to empty string
-    expression = ""
-except:
-# some error occured
-# showing it to the user equation.set("Enter a valid expression")
-    expression = ""
 
 # Creating GUI
 root=Tk()
 root.title("Calculator GUI")
 root.geometry("250x250")# default size of the window
 root.resizable(0,0)# window CANNOT be resized
+equation=StringVar()
 exp=Entry(root,textvariable=equation)
 equation.set("Enter an expression")
 exp.grid(row=0, columnspan=10)
-numPad=[['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['-', '0', '.']]
-r=1
+numPad=[['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['clr', '0', '.']]
+r=0
 c=0
 for row in numPad:
     for elm in row:
         if(c == 2):
-            Button(root, text=elm,command=lambda:self.action(elm)).grid(row=r, column=c, padx=(0,5))
+            #print(getValue(numPad,r,c))
+            # lambda r=r --> saves the current value when lambda is called
+            Button(root, text=elm,command=lambda r=r, c=c:input_number(numPad[r][c],equation)).grid(row=r+1, column=c, padx=(0,5))
         else:
-            Button(root, text=elm).grid(row=r, column=c)
+            #print(numPad[r][c], end="  ")
+            Button(root, text=elm,command=lambda r=r, c=c:input_number(numPad[r][c],equation)).grid(row=r+1, column=c)
         c+=1
     r+=1
     c=0
-operations=[['+', '-'], ['*', '/'], '=']
-i=1;
+operations=[['+', '-'], ['*', '/'], ['=','^']]
+i=0;
 j=5;
 for row in operations:
     for elm in row:
-        Button(root, text=elm,command=lambda:self.action(elm)).grid(row=i, column=j)
+        Button(root, text=elm,command=lambda i=i, j=j:input_operation(operations[i][j-5],equation)).grid(row=i+1, column=j)
         j+=1
     i+=1
     j=5
 trigOp=[['sin', 'asin'], ['cos', 'acos'], ['tan','atan']]
-a=1
+a=0
 b=7
 for row in trigOp:
     for elm in row:
-        Button(root, text=elm,command=lambda:self.action(elm)).grid(row=a, column=b)
+        Button(root, text=elm,command=lambda a=a, b=b:input_trig(trigOp[a][b],equation)).grid(row=a+1, column=b)
         b+=1
     a+=1
     b=7
