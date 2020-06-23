@@ -35,7 +35,6 @@ def input_operation(op,equation):
     else:
         # trying to evaluate the expression
         try:
-            print("try blk")
             result = str(eval(expression))
         # showing the result in the input field
             equation.set(result)
